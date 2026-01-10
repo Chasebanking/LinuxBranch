@@ -2,39 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chase Clone | Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>
-  <h2>CHASE</h2>
-  <button onclick="logout()">Logout</button>
-</header>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <h2>CHASE</h2>
+    <button onclick="logout()">Logout</button>
+  </nav>
 
-<div class="container">
-  <div class="balance-card">
-    <h3>Available Balance</h3>
-    <h1>$12,450.00</h1>
+  <!-- Main Content -->
+  <div class="dashboard-container">
+
+    <!-- Account Summary -->
+    <div class="card balance-card">
+      <h3>Account Balance</h3>
+      <p>$12,450.00</p>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="card transactions-card">
+      <h3>Recent Transactions</h3>
+      <ul>
+        <li>Payment to Amazon - $120</li>
+        <li>Salary Deposit - $2,500</li>
+        <li>Transfer to John Doe - $300</li>
+      </ul>
+    </div>
+
+    <!-- Send Money -->
+    <div class="card send-money-card">
+      <h3>Send Money</h3>
+      <input type="text" placeholder="Recipient Name" id="recipient">
+      <input type="number" placeholder="Amount" id="amount">
+      <button onclick="sendMoney()">Send</button>
+    </div>
+
   </div>
 
-  <div class="card">
-    <h3>Send Money</h3>
-    <input type="text" placeholder="Recipient">
-    <input type="number" placeholder="Amount">
-    <button>Send</button>
-  </div>
-
-  <div class="card">
-    <h3>Recent Transactions</h3>
-    <ul>
-      <li>Amazon − $120</li>
-      <li>Salary + $3,000</li>
-      <li>Netflix − $15</li>
-    </ul>
-  </div>
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
