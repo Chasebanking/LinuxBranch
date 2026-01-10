@@ -285,3 +285,50 @@ canvas#spendingChart { width: 100% !important; height: 200px !important; }
   .login-card { width: calc(100% - 32px); padding: 30px 20px; }
   .card { width: 100%; }
 }
+
+.send-money-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.send-money-card label {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.send-money-card input,
+.send-money-card select {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border 0.2s;
+}
+
+.send-money-card input:focus,
+.send-money-card select:focus {
+  border-color: #4bc0c0;
+  outline: none;
+}
+
+.send-money-card button {
+  padding: 12px;
+  background-color: #4bc0c0;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.send-money-card button:hover {
+  background-color: #36a5a5;
+}
+
+@media (max-width: 600px) {
+  .send-money-card form {
+    gap: 10px;
+  }
+}
