@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-  
-  // 1️⃣ Reset or set sample transactions
+
+  // ===== 1️⃣ Reset or set sample transactions =====
   localStorage.setItem("transactions", JSON.stringify([
     { type: "income", text: "Salary Deposit", amount: "$5000", date: "2026-01-01" },
     { type: "expense", text: "Amazon — Shopping", amount: "$120", date: "2026-01-10" },
@@ -9,17 +9,10 @@ document.addEventListener("DOMContentLoaded", () => {
     { type: "expense", text: "Rent — Housing", amount: "$500", date: "2026-01-01" }
   ]));
 
-  // 2️⃣ Now read transactions and display them
   const savedTransactions = JSON.parse(localStorage.getItem("transactions")) || [];
-
-  // Example: Show on console
   console.log(savedTransactions);
 
-  // 3️⃣ Then do the rest of your dashboard code (chart, balance, etc.)
-
-});
-
-  // ===== LOGIN HANDLER =====
+  // ===== 2️⃣ LOGIN HANDLER =====
   const loginForm = document.getElementById("login-form");
   if (loginForm) {
     const messageEl = document.getElementById("login-message");
@@ -27,12 +20,10 @@ document.addEventListener("DOMContentLoaded", () => {
       event.preventDefault();
       const username = document.getElementById("username")?.value?.trim() || "";
       const password = document.getElementById("password")?.value || "";
-      if (!username || !password) return alert("Please enter both username and password.");
+      if (!username || !password) return alert("Enter both username & password.");
 
-      if (messageEl) {
-        messageEl.style.color = "blue";
-        messageEl.textContent = "Checking credentials...";
-      }
+      if (messageEl) messageEl.style.color = "blue";
+      messageEl.textContent = "Checking credentials...";
 
       setTimeout(() => {
         if (username === "John Williams" && password === "Password123") {
