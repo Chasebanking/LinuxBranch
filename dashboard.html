@@ -9,13 +9,13 @@
 <body>
 
   <!-- Navbar -->
-  <nav class="navbar">
-    <div class="profile">
-      <img src="avatar.jpg" alt="Avatar" class="avatar">
-      <span>Welcome, John</span>
-    </div>
-    
-    <button id="logout-btn">Logout</button>
+<nav class="navbar">
+  <div class="profile" id="profile-btn">
+    <img src="avatar.jpg" alt="Avatar" class="avatar">
+    <span>Welcome, John</span>
+  </div>
+  
+  <button id="logout-btn">Logout</button>
   </nav>
 
   <!-- Dashboard -->
@@ -207,6 +207,20 @@
   </div>
   <small>&copy; 2026 JPMorgan Chase Bank, N.A. All rights reserved.</small>
 </footer>
+  
+<!-- Profile Panel -->
+<div id="profile-panel">
+  <div class="profile-header">
+    <img src="avatar.jpg" alt="Avatar" class="avatar-large">
+    <h3>John Williams</h3>
+    <p>john.williams@example.com</p>
+  </div>
+  <div class="profile-actions">
+    <button id="edit-profile">Edit Profile</button>
+    <button id="account-settings">Account Settings</button>
+    <button id="close-profile">Close</button>
+  </div>
+</div>
   
 </body>
 </html>
