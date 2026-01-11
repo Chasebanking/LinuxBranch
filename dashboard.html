@@ -39,6 +39,11 @@
   </div>
 </div>
 
+<div class="spending-trends-card" style="margin:20px;padding:15px;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,0.1);background:#fff;">
+  <h3 style="margin-bottom:15px;font-size:16px;color:#333;">Spending Trends</h3>
+  <canvas id="spendingChart" height="200"></canvas>
+</div>
+
     <!-- Recent Transactions -->
     <div class="card transactions-card">
       <h3>Recent Transactions</h3>
@@ -135,6 +140,8 @@ const spendingChart = new Chart(ctx, {
   </div>
   <small>&copy; 2026 JPMorgan Chase Bank, N.A. All rights reserved.</small>
 </footer>
+  
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
 </body>
 </html>
