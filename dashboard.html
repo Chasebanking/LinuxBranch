@@ -112,92 +112,56 @@
   <script src="script.js"></script>
  
   <script>
-  // Check if transactions exist, otherwise use sample data
+  // Sample transactions if none exist
   let transactionData = JSON.parse(localStorage.getItem("transactions")) || [];
-
-  // If no transactions, add demo data (for first-time view)
   if (transactionData.length === 0) {
     transactionData = [
-      { type: "expense", text: "Amazon — Shopping", amount: "$120" },
-      { type: "expense", text: "Uber — Transport", amount: "$50" },
-      { type: "expense", text: "Starbucks — Coffee", amount: "$20" },
-      { type: "expense", text: "Netflix — Entertainment", amount: "$15" },
-      { type: "expense", text: "Rent — Housing", amount: "$500" }
+      { type: "expense", text: "Amazon — Shopping", amount: "$120", date: "2026-01-10" },
+      { type: "expense", text: "Uber — Transport", amount: "$50", date: "2026-01-12" },
+      { type: "expense", text: "Starbucks — Coffee", amount: "$20", date: "2026-02-05" },
+      { type: "expense", text: "Netflix — Entertainment", amount: "$15", date: "2026-02-20" },
+      { type: "expense", text: "Rent — Housing", amount: "$500", date: "2026-03-01" }
     ];
     localStorage.setItem("transactions", JSON.stringify(transactionData));
   }
 
-  // Aggregate spending by category (using 'note' after '—' or default 'Others')
-  const spendingSummary = {};
+  // Prepare monthly totals
+  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  let monthlyExpenses = Array(12).fill(0);
+  let monthlyIncome = Array(12).fill(0);
+
   transactionData.forEach(tx => {
-    if (tx.type === "expense") {
-      const parts = tx.text.split("—");
-      const category = parts[1] ? parts[1].trim() : "Others";
-      const amount = parseFloat(tx.amount.replace(/[$,]/g, ""));
-      spendingSummary[category] = (spendingSummary[category] || 0) + amount;
-    }
+    const txDate = tx.date ? new Date(tx.date) : new Date();
+    const monthIndex = txDate.getMonth();
+    const amount = parseFloat(tx.amount.replace(/[$,]/g,"")) || 0;
+    
+    if (tx.type === "expense") monthlyExpenses[monthIndex] += amount;
+    if (tx.type === "income") monthlyIncome[monthIndex] += amount;
   });
-
-  // Prepare Chart.js data
-  const labels = Object.keys(spendingSummary);
-  const data = Object.values(spendingSummary);
-
-  // Optional: generate a color for each bar dynamically
-  const colors = labels.map(() => `rgba(${Math.floor(Math.random()*155 + 50)}, 123, 255, 0.7)`);
 
   // Create chart
   const ctx = document.getElementById('spendingChart').getContext('2d');
   new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: labels,
-      datasets: [{
-        label: 'Expenses ($)',
-        data: data,
-        backgroundColor: colors,
-        borderColor: colors.map(c => c.replace("0.7", "1")),
-        borderWidth: 1
-      }]
+      labels: months,
+      datasets: [
+        { label: "Expenses", data: monthlyExpenses, backgroundColor: "rgba(217, 69, 69, 0.7)", borderRadius: 6 },
+        { label: "Income", data: monthlyIncome, backgroundColor: "rgba(26, 154, 58, 0.7)", borderRadius: 6 }
+      ]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              return `$${context.raw.toLocaleString()}`;
-            }
-          }
-        }
-      },
+      plugins: { legend: { position: "top" }, tooltip: { mode: "index", intersect: false } },
       scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            color: '#333',
-            callback: function(value) {
-              return `$${value.toLocaleString()}`;
-            }
-          },
-          grid: {
-            color: 'rgba(0,0,0,0.05)'
-          }
-        },
-        x: {
-          ticks: { color: '#333' },
-          grid: { display: false }
-        }
-      },
-      animation: {
-        duration: 1000,
-        easing: 'easeOutQuart'
+        x: { stacked: false, ticks: { color: '#333' } },
+        y: { stacked: false, beginAtZero: true, ticks: { callback: v => `$${v.toLocaleString()}`, color: '#333' }, grid: { color: 'rgba(0,0,0,0.05)' } }
       }
     }
   });
 </script>
-
+      
 <footer class="login-footer">
   <div class="footer-links">
     <a href="#">Privacy</a> | 
