@@ -57,7 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (balanceEl) balanceEl.textContent = "$" + totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   // Transactions
-  const savedTransactions = JSON.parse(localStorage.getItem("transactions")) || [];
   if (transactionsList) {
     savedTransactions.forEach(tx => {
       const li = document.createElement("li");
