@@ -23,7 +23,8 @@ document.addEventListener("DOMContentLoaded", () => {
       messageEl.textContent = "Checking credentials...";
 
       setTimeout(() => {
-        if (username === "John Williams" && password === "1346852") {
+          const savedUser = JSON.parse(localStorage.getItem("demoUser")) || {};
+          if (username === savedUser.fullName && password === savedUser.password) {
           if (messageEl) {
             messageEl.style.color = "green";
             messageEl.textContent = "Login successful! Redirecting...";
@@ -245,7 +246,11 @@ const demoUser = {
   emailNotif: true,
   smsNotif: false
 };
-
+  // Save demo user to localStorage if not already saved
+if (!localStorage.getItem("demoUser")) {
+  localStorage.setItem("demoUser", JSON.stringify(demoUser));
+}
+  
 // ===== CHANGE PASSWORD =====
 const passwordForm = document.getElementById("password-form");
 if (passwordForm) {
@@ -278,6 +283,8 @@ if (passwordForm) {
     }
 
     demoUser.password = newP;
+    // Update localStorage so login page sees the new password
+    localStorage.setItem("demoUser", JSON.stringify(demoUser));
     passwordMessage.textContent = "Password reset link sent to email ✔";
     passwordMessage.classList.remove("error");
     passwordMessage.classList.add("success");
