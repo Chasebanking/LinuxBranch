@@ -5,34 +5,35 @@
   <title>Account Settings | Front Page</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
+
   <style>
     .info-page { max-width: 550px; margin: 30px auto; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-    h1 { margin-bottom: 15px; }
+    h1, h2 { margin-bottom: 15px; }
     .form-group { margin-bottom: 15px; }
-    input[type="text"], input[type="number"], select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; }
+    input, select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; }
     button { padding: 10px 20px; border: none; border-radius: 6px; background: #007bff; color: #fff; cursor: pointer; }
     button:hover { background: #0056b3; }
     .toggle-switch { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .toggle-switch input { transform: scale(1.2); }
     .message { margin-top: 10px; font-weight: 500; }
     .success { color: green; }
     .error { color: red; }
     .masked { letter-spacing: 3px; }
+    ul { list-style: none; padding: 0; }
+    li { margin-bottom: 8px; }
+    .remove-btn { background:#dc3545; margin-left:10px; padding:4px 10px; font-size:12px; }
   </style>
 </head>
+
 <body>
 
 <script>
-  // Block access if not logged in
   if (!localStorage.getItem("loggedIn")) {
     window.location.href = "index.html";
   }
 </script>
 
 <nav class="navbar">
-  <div class="profile">
-    <span>Front Page</span>
-  </div>
+  <div class="profile">Front Page</div>
   <a href="dashboard.html" class="logout-btn">Back to Dashboard</a>
 </nav>
 
@@ -42,165 +43,155 @@
   <!-- Account Details -->
   <section>
     <h2>Account Details</h2>
-    <p>Account Number: <span id="accountNumber" class="masked">**** **** 1234</span> 
+    <p>
+      Account Number:
+      <span id="accountNumber" class="masked">**** **** 8433</span>
       <button id="toggleAccountNumber" style="padding:5px 10px;font-size:12px;">Show</button>
     </p>
     <p>Account Type: <strong>Checking</strong></p>
     <p>Balance: <span id="accountBalance" class="masked">$••••••</span></p>
   </section>
 
-  <!-- Daily Transfer Limits -->
-  <section style="margin-top: 30px;">
-    <h2>Daily Transfer Limits</h2>
+  <!-- Daily Transfer Limit -->
+  <section style="margin-top:30px;">
+    <h2>Daily Transfer Limit</h2>
     <form id="limits-form">
-      <div class="form-group">
-        <label for="dailyLimit">Set Daily Limit ($)</label>
-        <input type="number" id="dailyLimit" min="0" step="100" required>
-      </div>
+      <input type="number" id="dailyLimit" min="0" step="100" required>
       <button type="submit">Update Limit</button>
       <p id="limit-message" class="message"></p>
     </form>
   </section>
 
   <!-- Linked Accounts -->
-  <ul id="linkedAccounts"></ul>
-  
-    <button id="addAccountBtn" style="margin-top:10px;">Add Linked Account</button>
+  <section style="margin-top:30px;">
+    <h2>Linked Accounts</h2>
+    <ul id="linkedAccounts"></ul>
+    <button id="addAccountBtn">Add Linked Account</button>
     <p id="linked-message" class="message"></p>
   </section>
 
   <!-- Transaction Alerts -->
-  <section style="margin-top: 30px;">
+  <section style="margin-top:30px;">
     <h2>Transaction Alerts</h2>
     <div class="toggle-switch">
       <input type="checkbox" id="txnEmailNotif">
-      <label for="txnEmailNotif">Email Alerts for Transactions Above $1000</label>
+      <label>Email alerts for transactions above $1000</label>
     </div>
     <div class="toggle-switch">
       <input type="checkbox" id="txnSMSNotif">
-      <label for="txnSMSNotif">SMS Alerts for Transactions Above $1000</label>
+      <label>SMS alerts for transactions above $1000</label>
     </div>
     <button id="saveAlertsBtn">Save Alerts</button>
     <p id="alerts-message" class="message"></p>
   </section>
 
-  <section style="margin-top: 30px;">
+  <section style="margin-top:30px;">
     <button id="logoutBtn" style="background:#dc3545;">Logout</button>
   </section>
 </main>
 
 <footer class="login-footer">
-    <small>&copy; 2026 Front Page, All rights reserved.</small>
+  <small>&copy; 2026 Front Page. All rights reserved.</small>
 </footer>
 
 <script>
-  // ===== Demo Account Data =====
+  // ===== DEFAULT DATA =====
   const defaultAccount = {
-  accountNumber: "21908488433",
-  balance: 1500450.50,
-  dailyLimit: 40000,
-  linkedAccounts: [
-    { bank: "Bank of America", number: "5678" },
-    { bank: "Chase Bank", number: "9012" }
-  ],
-  txnEmailAlerts: true,
-  txnSMSAlerts: false
-};
+    accountNumber: "21908488433",
+    balance: 1500450.50,
+    dailyLimit: 40000,
+    linkedAccounts: [
+      { bank: "Bank of America", number: "5678" },
+      { bank: "Chase Bank", number: "9012" }
+    ],
+    txnEmailAlerts: true,
+    txnSMSAlerts: false
+  };
 
-  let demoAccount = JSON.parse(localStorage.getItem("accountData")) || defaultAccount;
+  let accountData = JSON.parse(localStorage.getItem("accountData")) || defaultAccount;
+  localStorage.setItem("accountData", JSON.stringify(accountData));
 
-  // ===== Populate Account Details =====
+  // ===== ACCOUNT VISIBILITY =====
   const accountNumberEl = document.getElementById("accountNumber");
   const accountBalanceEl = document.getElementById("accountBalance");
-  const toggleAccountBtn = document.getElementById("toggleAccountNumber");
+  const toggleBtn = document.getElementById("toggleAccountNumber");
+  let visible = false;
 
-  let showAccount = false;
-  toggleAccountBtn.addEventListener("click", () => {
-    showAccount = !showAccount;
-    accountNumberEl.textContent = showAccount 
-      ? demoAccount.accountNumber.replace(/(\d{4})(?=\d)/g, "$1 ") 
+  toggleBtn.onclick = () => {
+    visible = !visible;
+    accountNumberEl.textContent = visible
+      ? accountData.accountNumber.replace(/(\d{4})(?=\d)/g, "$1 ")
       : "**** **** 8433";
-    accountBalanceEl.textContent = showAccount 
-      ? "$" + demoAccount.balance.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})
+
+    accountBalanceEl.textContent = visible
+      ? "$" + accountData.balance.toLocaleString()
       : "$••••••";
-    toggleAccountBtn.textContent = showAccount ? "Hide" : "Show";
-  });
 
-  // ===== Daily Limit Form =====
-  document.getElementById("limits-form").addEventListener("submit", e => {
+    toggleBtn.textContent = visible ? "Hide" : "Show";
+  };
+
+  // ===== DAILY LIMIT =====
+  document.getElementById("limits-form").onsubmit = e => {
     e.preventDefault();
-    const newLimit = parseFloat(document.getElementById("dailyLimit").value);
-    if (isNaN(newLimit) || newLimit <= 0) {
-      const msg = document.getElementById("limit-message");
-      msg.textContent = "Invalid limit!";
-      msg.className = "message error";
-      return;
-    }
-    demoAccount.dailyLimit = newLimit;
-    localStorage.setItem("accountData", JSON.stringify(demoAccount));
-    const msg = document.getElementById("limit-message");
-    msg.textContent = `Daily limit updated to $${newLimit.toLocaleString()} ✔`;
-    msg.className = "message success";
-  });
+    accountData.dailyLimit = Number(dailyLimit.value);
+    localStorage.setItem("accountData", JSON.stringify(accountData));
+    limit-message.textContent = "Daily limit updated ✔";
+    limit-message.className = "message success";
+  };
 
-  // ===== Linked Accounts =====
+  // ===== LINKED ACCOUNTS =====
   const linkedList = document.getElementById("linkedAccounts");
-  let savedAccount = JSON.parse(localStorage.getItem("accountData"));
 
-if (savedAccount) {
-  demoAccount.linkedAccounts = savedAccount.linkedAccounts;
-}
   function renderLinkedAccounts() {
-  linkedList.innerHTML = "";
-  demoAccount.linkedAccounts.forEach((acc, index) => {
-    const li = document.createElement("li");
-    li.innerHTML = `${acc.bank} — **** **** ${acc.number} 
-      <button class="remove-btn" data-index="${index}">Remove</button>`;
-    linkedList.appendChild(li);
-  });
+    linkedList.innerHTML = "";
+    accountData.linkedAccounts.forEach((acc, i) => {
+      const li = document.createElement("li");
+      li.innerHTML = `${acc.bank} — **** ${acc.number}
+        <button class="remove-btn" data-index="${i}">Remove</button>`;
+      linkedList.appendChild(li);
+    });
   }
   renderLinkedAccounts();
-  const linkedMsg = document.getElementById("linked-message");
- 
-  linkedList.addEventListener("click", e => {
+
+  document.getElementById("addAccountBtn").onclick = () => {
+    const bank = prompt("Bank name:");
+    const number = prompt("Last 4 digits:");
+    if (bank && number && number.length === 4) {
+      accountData.linkedAccounts.push({ bank, number });
+      localStorage.setItem("accountData", JSON.stringify(accountData));
+      renderLinkedAccounts();
+      linked-message.textContent = "Linked account added ✔";
+      linked-message.className = "message success";
+    }
+  };
+
+  linkedList.onclick = e => {
     if (e.target.classList.contains("remove-btn")) {
-      const li = e.target.parentElement;
-      li.remove();
-      linkedMsg.textContent = "Linked account removed ✔";
-      linkedMsg.className = "message success";
+      accountData.linkedAccounts.splice(e.target.dataset.index, 1);
+      localStorage.setItem("accountData", JSON.stringify(accountData));
+      renderLinkedAccounts();
+      linked-message.textContent = "Linked account removed ✔";
+      linked-message.className = "message success";
     }
-  });
+  };
 
-  document.getElementById("addAccountBtn").addEventListener("click", () => {
-    const bank = prompt("Enter bank name:");
-    const number = prompt("Enter last 4 digits of account:");
-    if (bank && number) {
-      const li = document.createElement("li");
-      li.innerHTML = `${bank} — **** **** ${number} <button class="remove-btn">Remove</button>`;
-      linkedList.appendChild(li);
-      linkedMsg.textContent = "Linked account added ✔";
-      linkedMsg.className = "message success";
-    }
-  });
+  // ===== ALERTS =====
+  txnEmailNotif.checked = accountData.txnEmailAlerts;
+  txnSMSNotif.checked = accountData.txnSMSAlerts;
 
-  // ===== Transaction Alerts =====
-  document.getElementById("saveAlertsBtn").addEventListener("click", () => {
-    demoAccount.txnEmailAlerts = document.getElementById("txnEmailNotif").checked;
-    demoAccount.txnSMSAlerts = document.getElementById("txnSMSNotif").checked;
-    const msg = document.getElementById("alerts-message");
-    msg.textContent = "Transaction alert preferences saved ✔";
-    msg.className = "message success";
-  });
+  saveAlertsBtn.onclick = () => {
+    accountData.txnEmailAlerts = txnEmailNotif.checked;
+    accountData.txnSMSAlerts = txnSMSNotif.checked;
+    localStorage.setItem("accountData", JSON.stringify(accountData));
+    alerts-message.textContent = "Alerts saved ✔";
+    alerts-message.className = "message success";
+  };
 
-  // ===== Populate Alerts =====
-  document.getElementById("txnEmailNotif").checked = demoAccount.txnEmailAlerts;
-  document.getElementById("txnSMSNotif").checked = demoAccount.txnSMSAlerts;
-
-  // ===== Logout =====
-  document.getElementById("logoutBtn").addEventListener("click", () => {
+  // ===== LOGOUT =====
+  logoutBtn.onclick = () => {
     localStorage.removeItem("loggedIn");
     window.location.href = "index.html";
-  });
+  };
 </script>
 
 </body>
