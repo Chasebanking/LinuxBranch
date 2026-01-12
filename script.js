@@ -215,45 +215,33 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ===== QUICK ACTIONS (PAY BILL & REQUEST MONEY TOGGLE) =====
-const quickBtns = document.querySelectorAll('.quick-btn');
-const payBillCard = document.querySelector('.pay-bill-card');
-const requestMoneyCard = document.querySelector('.request-money-card');
+   const quickBtns = document.querySelectorAll('.quick-btn');
+   const payBillCard = document.querySelector('.pay-bill-card');
+   const requestMoneyCard = document.querySelector('.request-money-card');
 
-quickBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    const action = btn.dataset.action;
+   quickBtns.forEach(btn => {
+   btn.addEventListener('click', () => {
+   const action = btn.dataset.action;
 
-    // Ignore send-money (already handled elsewhere)
+    // Ignore send-money (handled elsewhere)
     if (action === 'send-money') return;
 
-    // Always hide Send Money form when using quick actions
-    if (sendForm) sendForm.style.display = "none";
+    // Determine current state
+    const payVisible = payBillCard.style.display === 'block';
+    const requestVisible = requestMoneyCard.style.display === 'block';
+
+    // Toggle logic
+    if (action === 'pay-bill') {
+      payBillCard.style.display = !payVisible ? 'block' : 'none';
+      requestMoneyCard.style.display = 'none'; // always hide the other
+    } else if (action === 'request-money') {
+      requestMoneyCard.style.display = !requestVisible ? 'block' : 'none';
+      payBillCard.style.display = 'none'; // always hide the other
+    }
+
+    // Hide Send Money if open
+    if (sendForm) sendForm.style.display = 'none';
     if (toggleTransferBtn) toggleTransferBtn.textContent = "Transfer Funds";
-
-    // ===== PAY BILL TOGGLE =====
-    if (action === 'pay-bill' && payBillCard) {
-      const isVisible = payBillCard.style.display === 'block';
-
-      // Close all first
-      if (payBillCard) payBillCard.style.display = 'none';
-      if (requestMoneyCard) requestMoneyCard.style.display = 'none';
-
-      // Toggle current
-      if (!isVisible) payBillCard.style.display = 'block';
-    }
-
-    // ===== REQUEST MONEY TOGGLE =====
-    if (action === 'request-money' && requestMoneyCard) {
-      const isVisible = requestMoneyCard.style.display === 'block';
-
-      // Close all first
-      if (payBillCard) payBillCard.style.display = 'none';
-      if (requestMoneyCard) requestMoneyCard.style.display = 'none';
-
-      // Toggle current
-      if (!isVisible) requestMoneyCard.style.display = 'block';
-    }
   });
 });
 
