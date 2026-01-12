@@ -1,3 +1,9 @@
+<script>
+  if (!localStorage.getItem("loggedIn")) {
+    window.location.href = "index.html"; // redirect if not logged in
+  }
+</script>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,7 +32,7 @@
     of the demo content.
   </p>
 
-  <a href="index.html">← Back to Home</a>
+  <a href="dashboard.html">← Back to Home</a>
 </main>
 
 <footer class="login-footer">
