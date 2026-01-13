@@ -178,7 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
   // Special Wells Fargo check
-  if (bank === "WEF" && account === "715623948") {
+  if (bank === "WEF" && account === "15623948807") {
   pinModal.style.display = "none";
   // Let the loader run first
   sendBtn.disabled = true;
