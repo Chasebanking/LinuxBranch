@@ -1,17 +1,104 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // ===== DEMO USER =====
-  let demoUser = JSON.parse(localStorage.getItem("demoUser"));
-  if (!demoUser) {
-    demoUser = {
-      fullName: "Charles Williams",
-      email: "Charlesweahh@gmail.com",
-      phone: "+1 510 367 1796",
-      password: "1346000",
-      emailNotif: true,
-      smsNotif: false
-    };
-    localStorage.setItem("demoUser", JSON.stringify(demoUser));
+// ===== GLOBAL DEMO USER =====
+let demoUser = JSON.parse(localStorage.getItem("demoUser"));
+if (!demoUser) {
+  demoUser = {
+    fullName: "Charles Williams",
+    email: "Charlesweahh@gmail.com",
+    phone: "+1 510 367 1796",
+    password: "1346000",
+    emailNotif: true,
+    smsNotif: false
+  };
+  localStorage.setItem("demoUser", JSON.stringify(demoUser));
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  // ===== LOGIN FORM =====
+  const loginForm = document.getElementById("login-form");
+  const messageEl = document.getElementById("login-message");
+
+  if (loginForm) {
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!username || !password) {
+        messageEl.style.color = "red";
+        messageEl.textContent = "Please enter both username and password.";
+        return;
+      }
+
+      messageEl.style.color = "blue";
+      messageEl.textContent = "Checking credentials...";
+
+      setTimeout(() => {
+        if (username === demoUser.fullName && password === demoUser.password) {
+          localStorage.setItem("loggedIn", "true");
+          messageEl.style.color = "green";
+          messageEl.textContent = "Login successful! Redirecting...";
+          setTimeout(() => window.location.href = "dashboard.html", 500);
+        } else {
+          messageEl.style.color = "red";
+          messageEl.textContent = "Invalid username or password.";
+        }
+      }, 500);
+    });
   }
+
+  // ===== AUTO REDIRECT IF LOGGED IN =====
+  if (localStorage.getItem("loggedIn") && window.location.pathname.endsWith("index.html")) {
+    window.location.href = "dashboard.html";
+  }
+
+  // ===== PASSWORD RESET =====
+  const passwordForm = document.getElementById("password-form");
+  if (passwordForm) {
+    const passwordMessage = document.getElementById("password-message");
+    passwordForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const current = document.getElementById("currentPassword").value;
+      const newP = document.getElementById("newPassword").value;
+      const confirmP = document.getElementById("confirmPassword").value;
+
+      if (current !== demoUser.password) {
+        passwordMessage.textContent = "Current password is incorrect!";
+        passwordMessage.className = "error";
+        return;
+      }
+      if (newP.length < 6) {
+        passwordMessage.textContent = "New password must be at least 6 characters!";
+        passwordMessage.className = "error";
+        return;
+      }
+      if (newP !== confirmP) {
+        passwordMessage.textContent = "New passwords do not match!";
+        passwordMessage.className = "error";
+        return;
+      }
+
+      // ✅ Update global demoUser and localStorage
+      demoUser.password = newP;
+      localStorage.setItem("demoUser", JSON.stringify(demoUser));
+      passwordMessage.textContent = "Password changed successfully ✔";
+      passwordMessage.className = "success";
+
+      passwordForm.reset();
+    });
+  }
+
+  // ===== LOGOUT =====
+  const logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("loggedIn");
+      window.location.href = "index.html";
+    });
+  }
+
+});
 
   // ===== INITIAL TRANSACTIONS =====
   let savedTransactions = JSON.parse(localStorage.getItem("transactions")) || [];
