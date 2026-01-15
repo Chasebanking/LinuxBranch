@@ -344,33 +344,84 @@ quickBtns.forEach(btn => {
     }
   });
 });
-  
+
   // ===== PAY BILL =====
-  const payBillForm = document.getElementById("pay-bill-form");
-  if (payBillForm && balanceEl && transactionsList) {
-    payBillForm.addEventListener("submit", e => {
-      e.preventDefault();
-      const biller = document.getElementById("biller").value.trim();
-      const amount = parseFloat(document.getElementById("bill-amount").value);
-      if (!biller || isNaN(amount) || amount <= 0 || amount > totalBalance) return;
+ const payBillForm = document.getElementById("pay-bill-form");
 
-      totalBalance -= amount;
-      localStorage.setItem("totalBalance", totalBalance);
-      balanceEl.textContent = "$" + totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+if (payBillForm && balanceEl && transactionsList) {
+  payBillForm.addEventListener("submit", e => {
+    e.preventDefault();
 
-      const tx = { type: "expense", text: `Bill Payment — ${biller}`, amount: `-$${amount.toLocaleString()}`, date: new Date().toISOString().split("T")[0] };
-      savedTransactions.unshift(tx);
-      localStorage.setItem("transactions", JSON.stringify(savedTransactions));
+    const biller = document.getElementById("biller").value.trim();
+    const amount = parseFloat(document.getElementById("bill-amount").value);
+    if (!biller || isNaN(amount) || amount <= 0 || amount > totalBalance) return;
 
-      const li = document.createElement("li");
-      li.className = "expense";
-      li.innerHTML = `<span>${tx.text}</span><span>${tx.amount}</span>`;
-      transactionsList.insertBefore(li, transactionsList.firstChild);
+    // Show PIN modal
+    pinModal.style.display = "flex";
+    pinInput.value = "";
+    pinMessage.textContent = "";
+    pinInput.focus();
+    let attemptsLeft = maxAttempts;
 
-      payBillForm.reset();
-    });
-  }
+    confirmBtn.onclick = () => {
+      const enteredPin = pinInput.value.trim();
+      if (enteredPin !== correctPin) {
+        attemptsLeft--;
+        pinMessage.textContent = attemptsLeft > 0 
+          ? `Incorrect PIN. ${attemptsLeft} attempt(s) remaining.` 
+          : "Maximum attempts reached. Try again later.";
+        if (attemptsLeft <= 0) setTimeout(() => pinModal.style.display = "none", 1000);
+        pinInput.value = "";
+        pinInput.focus();
+        return;
+      }
 
+      // Correct PIN: process payment
+      pinModal.style.display = "none";
+      payBillForm.querySelector("button[type='submit']").disabled = true;
+      const originalText = payBillForm.querySelector("button[type='submit']").textContent;
+      let dots = 0;
+      payBillForm.querySelector("button[type='submit']").textContent = "Processing";
+      const loader = setInterval(() => { 
+        dots = (dots + 1) % 4; 
+        payBillForm.querySelector("button[type='submit']").textContent = "Processing" + ".".repeat(dots); 
+      }, 400);
+
+      setTimeout(() => {
+        clearInterval(loader);
+
+        // Update balance
+        totalBalance -= amount;
+        balanceEl.textContent = "$" + totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        localStorage.setItem("totalBalance", totalBalance);
+
+        // Add transaction
+        const tx = { type: "expense", text: `Bill Payment — ${biller}`, amount: `-$${amount.toLocaleString()}`, date: new Date().toISOString().split("T")[0] };
+        savedTransactions.unshift(tx);
+        localStorage.setItem("transactions", JSON.stringify(savedTransactions));
+
+        const li = document.createElement("li");
+        li.className = "expense";
+        li.innerHTML = `<span>${tx.text}</span><span>${tx.amount}</span>`;
+        transactionsList.insertBefore(li, transactionsList.firstChild);
+
+        // Show success modal (same as Send Money)
+        document.getElementById("r-id").textContent = "TXN-" + Math.floor(Math.random() * 100000000);
+        document.getElementById("r-name").textContent = biller;
+        document.getElementById("r-amount").textContent = "$" + amount.toLocaleString();
+        document.getElementById("r-date").textContent = new Date().toLocaleString();
+        document.getElementById("success-modal").style.display = "flex";
+
+        // Reset form
+        payBillForm.reset();
+        payBillForm.querySelector("button[type='submit']").disabled = false;
+        payBillForm.querySelector("button[type='submit']").textContent = originalText;
+
+      }, 2000); // 2-second "Processing" delay
+    };
+  });
+}
+  
   // ===== REQUEST MONEY =====
   const requestMoneyForm = document.getElementById("request-money-form");
   if (requestMoneyForm && transactionsList) {
