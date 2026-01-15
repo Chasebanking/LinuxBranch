@@ -23,22 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("transactions", JSON.stringify(savedTransactions));
   }
 
-  // ===== LOGIN HANDLER =====
-  document.addEventListener("DOMContentLoaded", () => {
-  // ===== DEMO USER =====
-  let demoUser = JSON.parse(localStorage.getItem("demoUser"));
-  if (!demoUser) {
-    demoUser = {
-      fullName: "Charles Williams",
-      email: "Charlesweahh@gmail.com",
-      phone: "+1 510 367 1796",
-      password: "1346000", // default password
-      emailNotif: true,
-      smsNotif: false
-    };
-    localStorage.setItem("demoUser", JSON.stringify(demoUser));
-  }
-
   // ===== LOGIN FORM HANDLER =====
   const loginForm = document.getElementById("login-form");
   const messageEl = document.getElementById("login-message");
