@@ -437,6 +437,42 @@ document.addEventListener("click", e => {
     successModal.style.display = "none";
   }
 });
+
+  const downloadReceiptBtn = document.getElementById("download-receipt");
+
+if (downloadReceiptBtn) {
+  downloadReceiptBtn.addEventListener("click", () => {
+    const { jsPDF } = window.jspdf; // Access jsPDF
+    const doc = new jsPDF();
+
+    const id = document.getElementById("r-id").textContent;
+    const name = document.getElementById("r-name").textContent;
+    const amount = document.getElementById("r-amount").textContent;
+    const date = document.getElementById("r-date").textContent;
+
+    // Add header
+    doc.setFontSize(18);
+    doc.text("Transaction Receipt", 105, 20, { align: "center" });
+
+    // Add separator line
+    doc.setLineWidth(0.5);
+    doc.line(20, 25, 190, 25);
+
+    // Add receipt details
+    doc.setFontSize(12);
+    doc.text(`Transaction ID: ${id}`, 20, 40);
+    doc.text(`Recipient: ${name}`, 20, 50);
+    doc.text(`Amount: ${amount}`, 20, 60);
+    doc.text(`Date: ${date}`, 20, 70);
+
+    // Footer
+    doc.setFontSize(10);
+    doc.text("Thank you for using our service!", 105, 280, { align: "center" });
+
+    // Save the PDF
+    doc.save(`${id}.pdf`);
+  });
+}
   
   // ===== REQUEST MONEY =====
   const requestMoneyForm = document.getElementById("request-money-form");
