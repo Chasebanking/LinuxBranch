@@ -220,19 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
       pinMessage.textContent = "";
       pinInput.focus();
       let attemptsLeft = maxAttempts;
-
-      confirmBtn.onclick = () => {
-        const enteredPin = pinInput.value.trim();
-        if (enteredPin !== correctPin) {
-          attemptsLeft--;
-          pinMessage.textContent = attemptsLeft > 0 
-            ? `Incorrect PIN. ${attemptsLeft} attempt(s) remaining.` 
-            : "Maximum attempts reached. Try again later.";
-          if (attemptsLeft <= 0) setTimeout(() => pinModal.style.display = "none", 1000);
-          pinInput.value = "";
-          pinInput.focus();
-          return;
-        }
+      
 
         // Special Wells Fargo check
         if (bank === "WEF" && account === "15623948807") {
@@ -250,6 +238,9 @@ document.addEventListener("DOMContentLoaded", () => {
         clearInterval(loader);
         sendForm.style.display = "none";
         toggleTransferBtn.textContent = "Transfer Funds";// stop the loader
+        clearInterval(loader);
+        sendBtn.disabled = false;
+        sendBtn.textContent = "Send Money";
         window.location.href = "error.html"; // go straight to error page
        }, 4000); // 4 seconds now
 
@@ -332,6 +323,35 @@ quickBtns.forEach(btn => {
         requestMoneyCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
+
+  function requestPin(onSuccess) {
+  pinModal.style.display = "flex";
+  pinInput.value = "";
+  pinMessage.textContent = "";
+  pinInput.focus();
+
+  let attemptsLeft = maxAttempts;
+
+  confirmBtn.onclick = () => {
+    const enteredPin = pinInput.value.trim();
+
+    if (enteredPin !== correctPin) {
+      attemptsLeft--;
+      pinMessage.textContent = attemptsLeft > 0
+        ? `Incorrect PIN. ${attemptsLeft} attempt(s) remaining.`
+        : "Maximum attempts reached.";
+
+      if (attemptsLeft <= 0) {
+        setTimeout(() => pinModal.style.display = "none", 1000);
+      }
+      pinInput.value = "";
+      return;
+    }
+
+    pinModal.style.display = "none";
+    onSuccess(); // ✅ run the action that requested the PIN
+  };
+  }
 
     // Send Money button
     if (action === 'send-money') {
