@@ -380,17 +380,17 @@
 
     // Start processing animation
     if (targetBtn) {
-    targetBtn.disabled = true;
-    let dots = 0;
-    const loader = setInterval(() => {
-    dots = (dots + 1) % 4;
-    targetBtn.textContent = "Processing" + ".".repeat(dots);
-  }, 400);
-      
+      targetBtn.disabled = true;
+      let dots = 0;
+      const loader = setInterval(() => {
+        dots = (dots + 1) % 4;
+        targetBtn.textContent = "Processing" + ".".repeat(dots);
+      }, 400);
+
       setTimeout(() => {
-    clearInterval(loader);           // stop the dots animation
-        
-       // ===== SPECIAL CASE: Wells Fargo GOES TO ERROR PAGE =====
+        clearInterval(loader);
+
+        // ===== SPECIAL CASE: Wells Fargo GOES TO ERROR PAGE =====
         if (action === "send" && details.bank === "WEF" && details.account === "15623948807") {
           if (sendForm) sendForm.reset();
           if (toggleTransferBtn) toggleTransferBtn.textContent = "Transfer Funds";
@@ -473,8 +473,7 @@
     }
   });
 }
-
-// ===== PIN CANCEL =====
+   // ===== PIN CANCEL =====
 if (cancelPinBtn) {
   cancelPinBtn.addEventListener("click", () => {
     if (pinModal) pinModal.style.display = "none";
@@ -684,4 +683,4 @@ if (cancelPinBtn) {
     if (editProfileBtn) editProfileBtn.addEventListener("click", () => window.location.href = "profile.html");
     if (accountSettingsBtn) accountSettingsBtn.addEventListener("click", () => window.location.href = "account.html");
   });
-})();
+})(); 
