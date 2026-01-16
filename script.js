@@ -247,39 +247,6 @@
         li.appendChild(right);
         transactionsList.insertBefore(li, transactionsList.firstChild);
       }
-
-       // Show success modal if present  
-       const rRecipient = $("r-recipient");
-       if (rRecipient) {
-       if (pendingTransaction && pendingTransaction.details) {
-       const det = pendingTransaction.details;
-       rRecipient.textContent = det.account
-       ? `${det.recipient} — ${det.account}`
-       : det.recipient || "[Insert Beneficiary Name / Account Details]";
-      } else {
-       rRecipient.textContent = "[Insert Beneficiary Name / Account Details]";
-     }
-   }
-
-       const ramount = $("r-amount");
-       if (ramount) {
-       if (pendingTransaction && pendingTransaction.details) {
-       const det = pendingTransaction.details;
-       ramount.textContent = det.amount
-       ? Number(det.amount).toFixed(2)
-       : det.billAmount
-       ? Number(det.billAmount).toFixed(2)
-       : "0.00";
-      } else {
-       ramount.textContent = Number(amtValue).toFixed(2);
-      }
-    }
-
-        const rdate = $("r-date");
-        if (rdate) rdate.textContent = new Date().toLocaleDateString();
-
-        const rtime = $("r-time");
-        if (rtime) rtime.textContent = new Date().toLocaleTimeString("en-US", { hour12: false }) + " — UTC";
     
        // ===== SEND MONEY =====
         if (sendForm) {
