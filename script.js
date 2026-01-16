@@ -625,19 +625,21 @@ if (cancelPinBtn) {
     if (profileConnector) profileConnector.style.display = "none"; // ✅ hide the connector too
    });
 
-    // Close profile panel when clicking outside
+    // Only add profile panel click listener if on dashboard page
+    if (window.location.pathname.endsWith("dashboard.html")) {
     document.addEventListener("click", e => {
     if (
-    profilePanel &&
-    profilePanel.style.display === "block" &&
-    !profilePanel.contains(e.target) &&
-    profileBtn &&
-    !profileBtn.contains(e.target)
-  ) {
-    profilePanel.style.display = "none";
-    if (profileConnector) profileConnector.style.display = "none";
-  }
-});
+      profilePanel &&
+      profilePanel.style.display === "block" &&
+      !profilePanel.contains(e.target) &&
+      profileBtn &&
+      !profileBtn.contains(e.target)
+    ) {
+      profilePanel.style.display = "none";
+      if (profileConnector) profileConnector.style.display = "none";
+    }
+  });
+}
 
 // Independent listeners for profile actions
 if (editProfileBtn) editProfileBtn.addEventListener("click", () => window.location.href = "profile.html");
