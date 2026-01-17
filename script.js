@@ -575,6 +575,10 @@
 
         // PDF styling
         let y = 20; // vertical position start
+        // Bank logo (top-left)
+        const logo = new Image();
+        logo.src = "chase-logo.png"; // path to your logo
+        doc.addImage(logo, "PNG", 20, 12, 35, 12);
         // Watermark
         doc.setTextColor(220);
         doc.setFontSize(40);
@@ -613,6 +617,7 @@
         doc.setFontSize(14); doc.text("Account Information", 20, y); y += 8;
         doc.setFontSize(12);
         doc.text("From Account: JPMorgan Chase Bank, N.A. (****8433)", 20, y); y += 8;
+        doc.text("SWIFT / BIC: CHASUS33", 20, y); y += 8;
         const details = window.lastTransactionDetails;
         if (!details) return alert("No transaction data available for PDF.");
 
