@@ -59,12 +59,22 @@
     // ===== TOTAL BALANCE =====
     const balanceEl = document.querySelector(".balance");
     let totalBalance = parseFloat(localStorage.getItem("totalBalance"));
-    if (isNaN(totalBalance)) {
-      // Prefer computing from transactions instead of relying on DOM text
-      totalBalance = computeBalanceFromTransactions(savedTransactions);
-    }
-    if (balanceEl) balanceEl.textContent = formatCurrency(totalBalance);
 
+    if (isNaN(totalBalance)) {
+    // Compute from transactions if no previous balance stored
+    totalBalance = computeBalanceFromTransactions(savedTransactions);
+  }
+
+    // ===== MANUAL ADD TO BALANCE =====
+    // Increase totalBalance manually here
+    totalBalance += 1500000; // <-- change this number anytime to add more funds
+
+   // Save permanently
+   localStorage.setItem("totalBalance", String(totalBalance));
+
+   // Update display
+    if (balanceEl) balanceEl.textContent = formatCurrency(totalBalance);
+    
     // ===== LOGIN FORM =====
     const loginForm = $("login-form");
     const messageEl = $("login-message");
@@ -83,7 +93,7 @@
         }
 
         if (messageEl) {
-          messageEl.style.color = "blue";
+            messageEl.style.color = "blue";
           messageEl.textContent = "Checking credentials...";
         }
 
